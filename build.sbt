@@ -2,7 +2,8 @@ inThisBuild(
   List(
     organization := "com.iterable",
     homepage := Some(url("https://github.com/Iterable/sbt-codeartifact")),
-    licenses := Seq("MIT" -> url("https://choosealicense.com/licenses/mit/"))
+    licenses := Seq("MIT" -> url("https://choosealicense.com/licenses/mit/")),
+    version := "0.1.0"
   )
 )
 
