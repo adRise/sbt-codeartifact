@@ -16,6 +16,8 @@ object CodeArtifactPlugin extends AutoPlugin {
 
   object autoImport extends CodeArtifactKeys
 
+  val codeArtifactAuthToken = sys.env.getOrElse("CODEARTIFACT_AUTH_TOKEN", "")
+
   def buildPublishSettings: Seq[Setting[_]] = Seq(
     ThisBuild / codeArtifactUrl := "",
     ThisBuild / codeArtifactResolvers := Nil
@@ -24,14 +26,7 @@ object CodeArtifactPlugin extends AutoPlugin {
   def codeArtifactSettings: Seq[Setting[_]] = Seq(
     codeArtifactPublish := dynamicallyPublish.value,
     codeArtifactRepo := CodeArtifactRepo.fromUrl(codeArtifactUrl.value),
-    codeArtifactToken := sys.env
-      .get("CODEARTIFACT_AUTH_TOKEN")
-      .orElse(
-        Credentials.loadCredentials(Path.userHome / ".sbt" / "credentials").toOption.map(_.passwd)
-      )
-      .getOrElse(
-        CodeArtifact.getAuthToken(codeArtifactRepo.value)
-      ),
+    codeArtifactToken := codeArtifactAuthToken,
     codeArtifactConnectTimeout := CodeArtifact.Defaults.CONNECT_TIMEOUT,
     codeArtifactReadTimeout := CodeArtifact.Defaults.READ_TIMEOUT,
     codeArtifactPackage := CodeArtifactPackage(
