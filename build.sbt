@@ -1,16 +1,8 @@
 inThisBuild(
   List(
-    organization := "io.github.bbstilson",
-    homepage := Some(url("https://github.com/bbstilson/sbt-codeartifact")),
-    licenses := Seq("MIT" -> url("https://choosealicense.com/licenses/mit/")),
-    developers := List(
-      Developer(
-        "bbstilson",
-        "Brandon Stilson",
-        "bbstilson@fastmail.com",
-        url("https://github.com/bbstilson")
-      )
-    )
+    organization := "com.iterable",
+    homepage := Some(url("https://github.com/Iterable/sbt-codeartifact")),
+    licenses := Seq("MIT" -> url("https://choosealicense.com/licenses/mit/"))
   )
 )
 

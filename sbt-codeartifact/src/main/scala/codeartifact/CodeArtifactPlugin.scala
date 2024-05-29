@@ -16,8 +16,6 @@ object CodeArtifactPlugin extends AutoPlugin {
 
   object autoImport extends CodeArtifactKeys
 
-  val codeArtifactAuthToken = sys.env.getOrElse("CODEARTIFACT_AUTH_TOKEN", "")
-
   def buildPublishSettings: Seq[Setting[_]] = Seq(
     ThisBuild / codeArtifactUrl := "",
     ThisBuild / codeArtifactResolvers := Nil
@@ -26,7 +24,7 @@ object CodeArtifactPlugin extends AutoPlugin {
   def codeArtifactSettings: Seq[Setting[_]] = Seq(
     codeArtifactPublish := dynamicallyPublish.value,
     codeArtifactRepo := CodeArtifactRepo.fromUrl(codeArtifactUrl.value),
-    codeArtifactToken := codeArtifactAuthToken,
+    codeArtifactToken := getCodeArtifactAuthToken.value,
     codeArtifactConnectTimeout := CodeArtifact.Defaults.CONNECT_TIMEOUT,
     codeArtifactReadTimeout := CodeArtifact.Defaults.READ_TIMEOUT,
     codeArtifactPackage := CodeArtifactPackage(
@@ -52,6 +50,16 @@ object CodeArtifactPlugin extends AutoPlugin {
       .map(CodeArtifactRepo.fromUrl)
       .map(_.resolver)
   )
+
+  lazy val getCodeArtifactAuthToken: Def.Initialize[Task[String]] = Def.task {
+    val codeArtifactAuthToken = sys.env.get("CODEARTIFACT_AUTH_TOKEN")
+    if (codeArtifactAuthToken.isEmpty) {
+      sys.error(
+        "Unable to get CodeArtifact auth token from the CODEARTIFACT_AUTH_TOKEN environment variable."
+      )
+    }
+    codeArtifactAuthToken.getOrElse("")
+  }
 
   // Uses taskDyn because it can return one of two potential tasks
   // as its result, each with their own dependencies.
