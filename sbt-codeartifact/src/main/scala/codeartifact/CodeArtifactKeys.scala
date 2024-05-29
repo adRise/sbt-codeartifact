@@ -28,7 +28,7 @@ trait InternalCodeArtifactKeys {
   val codeArtifactRepo = taskKey[CodeArtifactRepo]("CodeArtifact repository.")
   val codeArtifactPackage = taskKey[CodeArtifactPackage]("CodeArtifact package.")
 
-  val codeArtifactToken = taskKey[String](
+  val codeArtifactToken = taskKey[Option[String]](
     "CodeArtifact authentication. Provided by environment variable CODEARTIFACT_AUTH_TOKEN or fetched dynamically from available AWS credentials."
   )
 }

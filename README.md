@@ -1,10 +1,5 @@
 # SBT CodeArtifact
 
-[![Maven][maven]][mavenlink]
-
-[maven]: https://maven-badges.herokuapp.com/maven-central/io.github.bbstilson/sbt-codeartifact/badge.svg?kill_cache=1&color=blue&style=for-the-badge
-[mavenlink]: https://search.maven.org/search?q=g:io.github.bbstilson%20AND%20a:sbt-codeartifact
-
 An sbt plugin for publishing/consuming packages to/from AWS CodeArtifact.
 
 ## Install
@@ -12,7 +7,7 @@ An sbt plugin for publishing/consuming packages to/from AWS CodeArtifact.
 First, you will need a CodeArtifact repository. Then, add the following to your sbt `project/plugins.sbt` file:
 
 ```scala
-addSbtPlugin("io.github.bbstilson" % "sbt-codeartifact" % version)
+addSbtPlugin("com.iterable" % "sbt-codeartifact" % version)
 ```
 
 ## Usage
