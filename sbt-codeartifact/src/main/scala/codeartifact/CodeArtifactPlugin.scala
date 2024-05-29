@@ -52,12 +52,18 @@ object CodeArtifactPlugin extends AutoPlugin {
   )
 
   lazy val getCodeArtifactAuthToken: Def.Initialize[Task[Option[String]]] = Def.task {
-    sys.env.get("CODEARTIFACT_AUTH_TOKEN").orElse {
-      streams.value.log.warn(
-        "Unable to get AWS CodeArtifact auth token from the CODEARTIFACT_AUTH_TOKEN environment variable."
+    sys.env
+      .get("CODEARTIFACT_AUTH_TOKEN")
+      .orElse(
+        Credentials
+          .loadCredentials(Path.userHome / ".sbt" / "credentials")
+          .toOption
+          .map(_.passwd)
       )
-      None
-    }
+      .orElse {
+        streams.value.log.warn("Unable to get AWS CodeArtifact auth token.")
+        None
+      }
   }
 
   // Uses taskDyn because it can return one of two potential tasks
@@ -79,7 +85,7 @@ object CodeArtifactPlugin extends AutoPlugin {
     val logger = streams.value.log
     val token = codeArtifactToken.value.getOrElse {
       throw new RuntimeException(
-        "Failed to publish to AWS Codeartifact because the auth token was not set in the CODEARTIFACT_AUTH_TOKEN environment variable."
+        "Failed to publish to AWS Codeartifact because the auth token was not set."
       )
     }
     val api = new CodeArtifactApi(
