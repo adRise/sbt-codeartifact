@@ -18,13 +18,13 @@ object CodeArtifactPlugin extends AutoPlugin {
 
   def buildPublishSettings: Seq[Setting[_]] = Seq(
     ThisBuild / codeArtifactUrl := "",
-    ThisBuild / codeArtifactResolvers := Nil
+    ThisBuild / codeArtifactResolvers := Nil,
+    ThisBuild / codeArtifactToken := getCodeArtifactAuthToken.value
   )
 
   def codeArtifactSettings: Seq[Setting[_]] = Seq(
     codeArtifactPublish := dynamicallyPublish.value,
     codeArtifactRepo := CodeArtifactRepo.fromUrl(codeArtifactUrl.value),
-    codeArtifactToken := getCodeArtifactAuthToken.value,
     codeArtifactConnectTimeout := CodeArtifact.Defaults.CONNECT_TIMEOUT,
     codeArtifactReadTimeout := CodeArtifact.Defaults.READ_TIMEOUT,
     codeArtifactPackage := CodeArtifactPackage(
@@ -37,7 +37,7 @@ object CodeArtifactPlugin extends AutoPlugin {
       isScalaProject = crossPaths.value
     ),
     credentials ++= {
-      val token = codeArtifactToken.value
+      val token = codeArtifactToken.value.getOrElse("")
       val repos = codeArtifactRepo.value +: codeArtifactResolvers.value
         .map(CodeArtifactRepo.fromUrl)
 
@@ -51,14 +51,13 @@ object CodeArtifactPlugin extends AutoPlugin {
       .map(_.resolver)
   )
 
-  lazy val getCodeArtifactAuthToken: Def.Initialize[Task[String]] = Def.task {
-    val codeArtifactAuthToken = sys.env.get("CODEARTIFACT_AUTH_TOKEN")
-    if (codeArtifactAuthToken.isEmpty) {
-      sys.error(
-        "Unable to get CodeArtifact auth token from the CODEARTIFACT_AUTH_TOKEN environment variable."
+  lazy val getCodeArtifactAuthToken: Def.Initialize[Task[Option[String]]] = Def.task {
+    sys.env.get("CODEARTIFACT_AUTH_TOKEN").orElse {
+      streams.value.log.warn(
+        "Unable to get AWS CodeArtifact auth token from the CODEARTIFACT_AUTH_TOKEN environment variable."
       )
+      None
     }
-    codeArtifactAuthToken.getOrElse("")
   }
 
   // Uses taskDyn because it can return one of two potential tasks
@@ -78,8 +77,13 @@ object CodeArtifactPlugin extends AutoPlugin {
 
   private def publish0: Def.Initialize[Task[Unit]] = Def.task {
     val logger = streams.value.log
+    val token = codeArtifactToken.value.getOrElse {
+      throw new RuntimeException(
+        "Failed to publish to AWS Codeartifact because the auth token was not set in the CODEARTIFACT_AUTH_TOKEN environment variable."
+      )
+    }
     val api = new CodeArtifactApi(
-      codeArtifactToken.value,
+      token = token,
       readTimeout = codeArtifactReadTimeout.value,
       connectTimeout = codeArtifactConnectTimeout.value
     )
