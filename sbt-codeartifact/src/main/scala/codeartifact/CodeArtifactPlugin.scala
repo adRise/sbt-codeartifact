@@ -32,6 +32,12 @@ object CodeArtifactPlugin extends AutoPlugin {
       .getOrElse(
         CodeArtifact.getAuthToken(codeArtifactRepo.value)
       ),
+    codeArtifactCredentials := {
+      val token = codeArtifactToken.value
+      val repos = codeArtifactRepo.value +: codeArtifactResolvers.value
+        .map(CodeArtifactRepo.fromUrl)
+      repos.map(CodeArtifact.mkCredentials(token))
+    },
     codeArtifactConnectTimeout := CodeArtifact.Defaults.CONNECT_TIMEOUT,
     codeArtifactReadTimeout := CodeArtifact.Defaults.READ_TIMEOUT,
     codeArtifactPackage := CodeArtifactPackage(
@@ -43,13 +49,7 @@ object CodeArtifactPlugin extends AutoPlugin {
       // See: https://www.scala-sbt.org/1.x/docs/Cross-Build.html#Scala-version+specific+source+directory
       isScalaProject = crossPaths.value
     ),
-    credentials ++= {
-      val token = codeArtifactToken.value
-      val repos = codeArtifactRepo.value +: codeArtifactResolvers.value
-        .map(CodeArtifactRepo.fromUrl)
-
-      repos.map(CodeArtifact.mkCredentials(token))
-    },
+    credentials ++= codeArtifactCredentials.value,
     publishTo := Some(codeArtifactRepo.value.resolver),
     publishMavenStyle := true,
     // Useful for consuming artifacts.

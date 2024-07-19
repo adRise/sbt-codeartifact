@@ -27,7 +27,7 @@ trait InternalCodeArtifactKeys {
   val codeArtifactConnectTimeout = taskKey[Int]("API request read timeout. Defaults to 30 seconds.")
   val codeArtifactRepo = taskKey[CodeArtifactRepo]("CodeArtifact repository.")
   val codeArtifactPackage = taskKey[CodeArtifactPackage]("CodeArtifact package.")
-
+  val codeArtifactCredentials = taskKey[Seq[Credentials]]("Credentials for CodeArtifact repos")
   val codeArtifactToken = taskKey[String](
     "CodeArtifact authentication. Provided by environment variable CODEARTIFACT_AUTH_TOKEN or fetched dynamically from available AWS credentials."
   )
