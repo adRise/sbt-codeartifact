@@ -19,12 +19,12 @@ object CodeArtifactPlugin extends AutoPlugin {
   def buildPublishSettings: Seq[Setting[_]] = Seq(
     ThisBuild / codeArtifactUrl := "",
     ThisBuild / codeArtifactResolvers := Nil,
-    ThisBuild / codeArtifactToken := getCodeArtifactAuthToken.value
+    codeArtifactRepo := CodeArtifactRepo.fromUrl(codeArtifactUrl.value),
+    codeArtifactToken := getCodeArtifactAuthToken.value
   )
 
   def codeArtifactSettings: Seq[Setting[_]] = Seq(
     codeArtifactPublish := dynamicallyPublish.value,
-    codeArtifactRepo := CodeArtifactRepo.fromUrl(codeArtifactUrl.value),
     codeArtifactConnectTimeout := CodeArtifact.Defaults.CONNECT_TIMEOUT,
     codeArtifactReadTimeout := CodeArtifact.Defaults.READ_TIMEOUT,
     codeArtifactPackage := CodeArtifactPackage(
@@ -51,7 +51,7 @@ object CodeArtifactPlugin extends AutoPlugin {
       .map(_.resolver)
   )
 
-  lazy val getCodeArtifactAuthToken: Def.Initialize[Task[Option[String]]] = Def.task {
+  def getCodeArtifactAuthToken: Def.Initialize[Task[Option[String]]] = Def.task {
     sys.env
       .get("CODEARTIFACT_AUTH_TOKEN")
       .orElse(
@@ -61,6 +61,7 @@ object CodeArtifactPlugin extends AutoPlugin {
           .map(_.passwd)
       )
       .orElse {
+        CodeArtifact.getAuthToken(codeArtifactRepo.value)
         streams.value.log.warn("Unable to get AWS CodeArtifact auth token.")
         None
       }
