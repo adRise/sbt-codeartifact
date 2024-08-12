@@ -5,7 +5,7 @@ scalaVersion := "2.13.5"
 // use it since only I have the aws creds to get an auth token.
 val repoUrl = "https://bbstilson-968410040515.d.codeartifact.us-west-2.amazonaws.com/maven/test/"
 
-codeArtifactUrl := repoUrl
+ThisBuild / codeArtifactUrl := repoUrl
 // Adding the same repo again.
 // We should see the same credentials and resolvers twice.
 codeArtifactResolvers := List(repoUrl)
