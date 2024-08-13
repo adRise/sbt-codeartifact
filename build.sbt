@@ -1,19 +1,26 @@
-inThisBuild(
-  List(
-    organization := "io.github.bbstilson",
-    homepage := Some(url("https://github.com/bbstilson/sbt-codeartifact")),
-    licenses := Seq("MIT" -> url("https://choosealicense.com/licenses/mit/")),
-    developers := List(
-      Developer(
-        "bbstilson",
-        "Brandon Stilson",
-        "bbstilson@fastmail.com",
-        url("https://github.com/bbstilson")
-      )
-    )
+ThisBuild / organization := "com.iterable"
+ThisBuild / organizationName := "Iterable"
+ThisBuild / organizationHomepage := Some(url("https://iterable.com"))
+
+ThisBuild / description := "A plugin for authenticating with AWS CodeArtifact"
+ThisBuild / licenses := Seq("MIT" -> url("https://opensource.org/licenses/MIT"))
+ThisBuild / homepage := Some(url("https://github.com/Iterable/sbt-codeartifact"))
+
+ThisBuild / developers := List(
+  Developer(
+    "douglasthomsen",
+    "Douglas Thomsen",
+    "douglas.thomsen@iterable.com",
+    url("https://github.com/douglasthomsen")
   )
 )
 
+ThisBuild / scmInfo := Some(
+  ScmInfo(
+    url("https://github.com/Iterable/sbt-codeartifact"),
+    "scm:git@github.com:Iterable/sbt-codeartifact.git"
+  )
+)
 lazy val testSettings: Seq[Setting[_]] = Seq(
   scriptedLaunchOpts := {
     scriptedLaunchOpts.value ++ Seq(
