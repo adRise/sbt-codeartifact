@@ -29,8 +29,12 @@ object CodeArtifact {
       .getAuthorizationToken(req)
       .authorizationToken()
 
-  def getAuthToken(repo: CodeArtifactRepo): String =
-    getAuthTokenFromRequest(getAuthorizationTokenRequest(repo.domain, repo.owner))
+  def getAuthToken(repo: CodeArtifactRepo): Option[String] =
+    try {
+      Some(getAuthTokenFromRequest(getAuthorizationTokenRequest(repo.domain, repo.owner)))
+    } catch {
+      case _: Throwable => None
+    }
 
   object Defaults {
     val READ_TIMEOUT: Int = 1.minutes.toMillis.toInt

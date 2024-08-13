@@ -29,9 +29,7 @@ object CodeArtifactPlugin extends AutoPlugin {
       .orElse(
         Credentials.loadCredentials(Path.userHome / ".sbt" / "credentials").toOption.map(_.passwd)
       )
-      .getOrElse(
-        CodeArtifact.getAuthToken(codeArtifactRepo.value)
-      ),
+      .orElse(CodeArtifact.getAuthToken(codeArtifactRepo.value)),
     codeArtifactConnectTimeout := CodeArtifact.Defaults.CONNECT_TIMEOUT,
     codeArtifactReadTimeout := CodeArtifact.Defaults.READ_TIMEOUT,
     codeArtifactPackage := CodeArtifactPackage(
@@ -44,7 +42,10 @@ object CodeArtifactPlugin extends AutoPlugin {
       isScalaProject = crossPaths.value
     ),
     credentials ++= {
-      val token = codeArtifactToken.value
+      val token = codeArtifactToken.value.getOrElse {
+        streams.value.log.warn("Unable to get AWS CodeArtifact auth token.")
+        ""
+      }
       val repos = codeArtifactRepo.value +: codeArtifactResolvers.value
         .map(CodeArtifactRepo.fromUrl)
 
@@ -75,8 +76,13 @@ object CodeArtifactPlugin extends AutoPlugin {
 
   private def publish0: Def.Initialize[Task[Unit]] = Def.task {
     val logger = streams.value.log
+    val token = codeArtifactToken.value.getOrElse {
+      throw new RuntimeException(
+        "Failed to publish to AWS Codeartifact because the auth token was not set."
+      )
+    }
     val api = new CodeArtifactApi(
-      codeArtifactToken.value,
+      token = token,
       readTimeout = codeArtifactReadTimeout.value,
       connectTimeout = codeArtifactConnectTimeout.value
     )
