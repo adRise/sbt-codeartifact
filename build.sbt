@@ -5,7 +5,6 @@ ThisBuild / organizationHomepage := Some(url("https://iterable.com"))
 ThisBuild / description := "A plugin for authenticating with AWS CodeArtifact"
 ThisBuild / licenses := Seq("MIT" -> url("https://opensource.org/licenses/MIT"))
 ThisBuild / homepage := Some(url("https://github.com/Iterable/sbt-codeartifact"))
-ThisBuild / version := "0.3.0"
 
 ThisBuild / developers := List(
   Developer(
