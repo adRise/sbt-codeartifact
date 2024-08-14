@@ -18,13 +18,18 @@ object CodeArtifactPlugin extends AutoPlugin {
 
   def buildPublishSettings: Seq[Setting[_]] = Seq(
     ThisBuild / codeArtifactUrl := "",
-    ThisBuild / codeArtifactResolvers := Nil,
-    codeArtifactRepo := CodeArtifactRepo.fromUrl(codeArtifactUrl.value),
-    codeArtifactToken := getCodeArtifactAuthToken.value
+    ThisBuild / codeArtifactResolvers := Nil
   )
 
   def codeArtifactSettings: Seq[Setting[_]] = Seq(
     codeArtifactPublish := dynamicallyPublish.value,
+    codeArtifactRepo := CodeArtifactRepo.fromUrl(codeArtifactUrl.value),
+    codeArtifactToken := sys.env
+      .get("CODEARTIFACT_AUTH_TOKEN")
+      .orElse(
+        Credentials.loadCredentials(Path.userHome / ".sbt" / "credentials").toOption.map(_.passwd)
+      )
+      .orElse(CodeArtifact.getAuthToken(codeArtifactRepo.value)),
     codeArtifactConnectTimeout := CodeArtifact.Defaults.CONNECT_TIMEOUT,
     codeArtifactReadTimeout := CodeArtifact.Defaults.READ_TIMEOUT,
     codeArtifactPackage := CodeArtifactPackage(
@@ -37,7 +42,10 @@ object CodeArtifactPlugin extends AutoPlugin {
       isScalaProject = crossPaths.value
     ),
     credentials ++= {
-      val token = codeArtifactToken.value.getOrElse("")
+      val token = codeArtifactToken.value.getOrElse {
+        streams.value.log.warn("Unable to get AWS CodeArtifact auth token.")
+        ""
+      }
       val repos = codeArtifactRepo.value +: codeArtifactResolvers.value
         .map(CodeArtifactRepo.fromUrl)
 
@@ -50,22 +58,6 @@ object CodeArtifactPlugin extends AutoPlugin {
       .map(CodeArtifactRepo.fromUrl)
       .map(_.resolver)
   )
-
-  def getCodeArtifactAuthToken: Def.Initialize[Task[Option[String]]] = Def.task {
-    sys.env
-      .get("CODEARTIFACT_AUTH_TOKEN")
-      .orElse(
-        Credentials
-          .loadCredentials(Path.userHome / ".sbt" / "credentials")
-          .toOption
-          .map(_.passwd)
-      )
-      .orElse {
-        CodeArtifact.getAuthToken(codeArtifactRepo.value)
-        streams.value.log.warn("Unable to get AWS CodeArtifact auth token.")
-        None
-      }
-  }
 
   // Uses taskDyn because it can return one of two potential tasks
   // as its result, each with their own dependencies.
