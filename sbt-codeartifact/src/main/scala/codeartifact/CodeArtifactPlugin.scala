@@ -54,16 +54,11 @@ object CodeArtifactPlugin extends AutoPlugin {
             |
             |The AWS CodeArtifact sbt plugin was not able to get a valid auth token. If you recieve and error due to
             |the a dependency not being found then it could be caused by this.
-            |
             |""".stripMargin
         )
 
         codeArtifactGetTokenInstructions.value.foreach { instructions =>
-          streams.value.log.warn(
-            s"""
-               | ${instructions}
-               |""".stripMargin
-          )
+          streams.value.log.warn(instructions + "\n")
         }
         ""
       }
