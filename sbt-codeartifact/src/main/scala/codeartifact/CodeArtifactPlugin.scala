@@ -58,7 +58,8 @@ object CodeArtifactPlugin extends AutoPlugin {
         )
 
         codeArtifactGetTokenInstructions.value.foreach { instructions =>
-          streams.value.log.warn(instructions + "\n")
+          val message = instructions + "\n"
+          streams.value.log.warn(message)
         }
         ""
       }
