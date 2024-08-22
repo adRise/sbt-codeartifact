@@ -18,6 +18,7 @@ object CodeArtifactPlugin extends AutoPlugin {
 
   def buildPublishSettings: Seq[Setting[_]] = Seq(
     ThisBuild / codeArtifactUrl := "",
+    ThisBuild / codeArtifactGetTokenInstructions := None,
     ThisBuild / codeArtifactResolvers := Nil
   )
 

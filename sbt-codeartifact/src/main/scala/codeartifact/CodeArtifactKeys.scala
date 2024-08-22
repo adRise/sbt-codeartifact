@@ -20,6 +20,9 @@ trait CodeArtifactKeys {
 
   val codeArtifactResolvers: SettingKey[List[String]] =
     settingKey[List[String]]("Additional CodeArtifact repos from which to consume packages.")
+
+  val codeArtifactGetTokenInstructions =
+    settingKey[Option[String]]("Instructions on how to get a token for CodeArtifact")
 }
 
 trait InternalCodeArtifactKeys {
@@ -31,9 +34,6 @@ trait InternalCodeArtifactKeys {
   val codeArtifactToken = taskKey[Option[String]](
     "CodeArtifact authentication. Provided by environment variable CODEARTIFACT_AUTH_TOKEN or fetched dynamically from available AWS credentials."
   )
-
-  val codeArtifactGetTokenInstructions =
-    taskKey[Option[String]]("Instructions on how to get a token for CodeArtifact")
 }
 
 object CodeArtifactKeys extends CodeArtifactKeys
