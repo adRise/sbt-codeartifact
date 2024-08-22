@@ -20,6 +20,9 @@ trait CodeArtifactKeys {
 
   val codeArtifactResolvers: SettingKey[List[String]] =
     settingKey[List[String]]("Additional CodeArtifact repos from which to consume packages.")
+
+  val codeArtifactGetTokenInstructions =
+    settingKey[Option[String]]("Instructions on how to get a token for CodeArtifact")
 }
 
 trait InternalCodeArtifactKeys {

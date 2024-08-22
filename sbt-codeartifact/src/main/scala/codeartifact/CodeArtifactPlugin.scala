@@ -18,6 +18,7 @@ object CodeArtifactPlugin extends AutoPlugin {
 
   def buildPublishSettings: Seq[Setting[_]] = Seq(
     ThisBuild / codeArtifactUrl := "",
+    ThisBuild / codeArtifactGetTokenInstructions := None,
     ThisBuild / codeArtifactResolvers := Nil
   )
 
@@ -43,7 +44,20 @@ object CodeArtifactPlugin extends AutoPlugin {
     ),
     credentials ++= {
       val token = codeArtifactToken.value.getOrElse {
-        streams.value.log.warn("Unable to get AWS CodeArtifact auth token.")
+        streams.value.log.warn(
+          """
+            |    ___        ______     ____          _         _         _   _  __            _
+            |   / \ \      / / ___|   / ___|___   __| | ___   / \   _ __| |_(_)/ _| __ _  ___| |_
+            |  / _ \ \ /\ / /\___ \  | |   / _ \ / _` |/ _ \ / _ \ | '__| __| | |_ / _` |/ __| __|
+            | / ___ \ V  V /  ___) | | |__| (_) | (_| |  __// ___ \| |  | |_| |  _| (_| | (__| |_
+            |/_/   \_\_/\_/  |____/   \____\___/ \__,_|\___/_/   \_\_|   \__|_|_|  \__,_|\___|\__|
+            |
+            |
+            |The AWS CodeArtifact sbt plugin was not able to get a valid auth token. If you recieve and error due to
+            |the a dependency not being found then it could be caused by this.""".stripMargin
+        )
+        val instructions = codeArtifactGetTokenInstructions.value.map("\n" + _ + "\n").getOrElse("")
+        streams.value.log.warn(instructions)
         ""
       }
       val repos = codeArtifactRepo.value +: codeArtifactResolvers.value
