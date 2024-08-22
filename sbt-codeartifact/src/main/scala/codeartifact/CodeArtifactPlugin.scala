@@ -53,14 +53,11 @@ object CodeArtifactPlugin extends AutoPlugin {
             |
             |
             |The AWS CodeArtifact sbt plugin was not able to get a valid auth token. If you recieve and error due to
-            |the a dependency not being found then it could be caused by this.
-            |""".stripMargin
+            |the a dependency not being found then it could be caused by this.""".stripMargin
         )
-
-        codeArtifactGetTokenInstructions.value.foreach { instructions =>
-          val message = instructions + "\n"
-          streams.value.log.warn(message)
-        }
+        streams.value.log.warn(
+          codeArtifactGetTokenInstructions.value.map("\n" + _ + "\n").getOrElse("")
+        )
         ""
       }
       val repos = codeArtifactRepo.value +: codeArtifactResolvers.value
