@@ -2,7 +2,6 @@ package codeartifact
 
 import sbt._
 import sbt.Keys._
-import sbt.internal.util.ManagedLogger
 
 object CodeArtifactPlugin extends AutoPlugin {
   import CodeArtifactKeys._
@@ -53,9 +52,9 @@ object CodeArtifactPlugin extends AutoPlugin {
     publishTo := Some(codeArtifactRepo.value.resolver),
     publishMavenStyle := true,
     // Useful for consuming artifacts.
-    resolvers ++= (codeArtifactUrl.value +: codeArtifactResolvers.value)
+    resolvers := (codeArtifactUrl.value +: codeArtifactResolvers.value)
       .map(CodeArtifactRepo.fromUrl)
-      .map(_.resolver)
+      .map(_.resolver) ++ resolvers.value
   )
 
   // Uses taskDyn because it can return one of two potential tasks
@@ -82,12 +81,20 @@ object CodeArtifactPlugin extends AutoPlugin {
     )
     val url = codeArtifactUrl.value.stripSuffix("/")
     val pkg = codeArtifactPackage.value
+    doPublish(api, url, pkg, packagedArtifacts.value.map(_._2).toSeq, logger)
+  }
+
+  def doPublish(
+    api: CodeArtifactApi,
+    url: String,
+    pkg: CodeArtifactPackage,
+    artifacts: Seq[File],
+    logger: Logger
+  ): Unit = {
     val basePublishPath = pkg.basePublishPath
     val versionPublishPath = pkg.versionPublishPath
 
-    val files = packagedArtifacts.value.toList
-      // Drop Artifact.
-      .map { case (_, file) => file }
+    val files = artifacts
       // Convert to os.Path.
       .map(file => os.Path(file))
       // Create CodeArtifact file name.
@@ -95,7 +102,7 @@ object CodeArtifactPlugin extends AutoPlugin {
 
     val metadataFile = {
       val td = os.temp.dir()
-      os.write(td / "maven-metadata.xml", codeArtifactPackage.value.mavenMetadata)
+      os.write(td / "maven-metadata.xml", pkg.mavenMetadata)
       val file = td / "maven-metadata.xml"
       s"$basePublishPath/${file.last}" -> file
     }
@@ -111,7 +118,7 @@ object CodeArtifactPlugin extends AutoPlugin {
 
   private def reportPublishResults(
     publishResults: Seq[requests.Response],
-    logger: ManagedLogger
+    logger: Logger
   ) = {
     if (publishResults.forall(_.is2xx)) {
       logger.info(s"Successfully published to AWS Codeartifact")
