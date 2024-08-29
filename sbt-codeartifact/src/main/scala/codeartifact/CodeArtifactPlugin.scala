@@ -53,8 +53,8 @@ object CodeArtifactPlugin extends AutoPlugin {
             |/_/   \_\_/\_/  |____/   \____\___/ \__,_|\___/_/   \_\_|   \__|_|_|  \__,_|\___|\__|
             |
             |
-            |The AWS CodeArtifact sbt plugin was not able to get a valid auth token. If you recieve and error due to
-            |the a dependency not being found then it could be caused by this.""".stripMargin
+            |The AWS CodeArtifact sbt plugin was not able to get a valid auth token. If you receive an error due to
+            |a dependency not being found then it could be caused by this.""".stripMargin
         )
         val instructions = codeArtifactGetTokenInstructions.value.map("\n" + _ + "\n").getOrElse("")
         streams.value.log.warn(instructions)
