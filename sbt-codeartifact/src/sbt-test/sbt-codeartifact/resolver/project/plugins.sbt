@@ -1,1 +1,1 @@
-addSbtPlugin("com.iterable" % "sbt-codeartifact" % System.getProperty("plugin.version"))
+addSbtPlugin("com.tubitv" % "sbt-codeartifact" % System.getProperty("plugin.version"))
