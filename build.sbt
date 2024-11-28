@@ -1,10 +1,8 @@
-ThisBuild / organization := "com.iterable"
-ThisBuild / organizationName := "Iterable"
-ThisBuild / organizationHomepage := Some(url("https://iterable.com"))
+ThisBuild / organization := "com.tubitv"
 
 ThisBuild / description := "A plugin for authenticating with AWS CodeArtifact"
 ThisBuild / licenses := Seq("MIT" -> url("https://opensource.org/licenses/MIT"))
-ThisBuild / homepage := Some(url("https://github.com/Iterable/sbt-codeartifact"))
+ThisBuild / homepage := Some(url("https://github.com/adRise/sbt-codeartifact"))
 
 ThisBuild / developers := List(
   Developer(
@@ -17,8 +15,8 @@ ThisBuild / developers := List(
 
 ThisBuild / scmInfo := Some(
   ScmInfo(
-    url("https://github.com/Iterable/sbt-codeartifact"),
-    "scm:git@github.com:Iterable/sbt-codeartifact.git"
+    url("https://github.com/adRise/sbt-codeartifact"),
+    "scm:git@github.com:adRise/sbt-codeartifact.git"
   )
 )
 lazy val testSettings: Seq[Setting[_]] = Seq(
