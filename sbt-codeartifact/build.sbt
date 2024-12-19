@@ -16,3 +16,8 @@ test := {
   (Test / test).value
   scripted.toTask("").value
 }
+
+githubOwner := "adRise"
+githubRepository := "sbt-codeartifact"
+publishMavenStyle := true
+githubTokenSource := TokenSource.GitConfig("github.token")
