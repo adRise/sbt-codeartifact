@@ -34,7 +34,12 @@ object CodeArtifact {
 
   def getAuthToken(repo: CodeArtifactRepo): Option[String] =
     try {
-      Some(getAuthTokenFromRequest(Region.of(repo.region), getAuthorizationTokenRequest(repo.domain, repo.owner)))
+      Some(
+        getAuthTokenFromRequest(
+          Region.of(repo.region),
+          getAuthorizationTokenRequest(repo.domain, repo.owner)
+        )
+      )
     } catch {
       case _: Throwable => None
     }
