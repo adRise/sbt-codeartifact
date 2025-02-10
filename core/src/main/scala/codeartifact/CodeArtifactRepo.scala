@@ -20,7 +20,14 @@ object CodeArtifactRepo {
   def fromUrl(url: String): CodeArtifactRepo = {
     url match {
       case CodeArtifactUrl(host, domain, owner, region, repo) =>
-        CodeArtifactRepo(name = repo, domain = domain, host = host, owner = owner, region = region, url = url)
+        CodeArtifactRepo(
+          name = repo,
+          domain = domain,
+          host = host,
+          owner = owner,
+          region = region,
+          url = url
+        )
       case _ =>
         sys.error(s"Invalid codeArtifactUrl: $url")
     }
