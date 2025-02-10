@@ -12,8 +12,3 @@ libraryDependencies ++= Seq(
 )
 
 testFrameworks += new TestFramework("utest.runner.Framework")
-
-githubOwner := "adRise"
-githubRepository := "sbt-codeartifact"
-publishMavenStyle := true
-githubTokenSource := TokenSource.GitConfig("github.token")

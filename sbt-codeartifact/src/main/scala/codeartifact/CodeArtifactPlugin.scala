@@ -34,9 +34,9 @@ object CodeArtifactPlugin extends AutoPlugin {
     codeArtifactConnectTimeout := CodeArtifact.Defaults.CONNECT_TIMEOUT,
     codeArtifactReadTimeout := CodeArtifact.Defaults.READ_TIMEOUT,
     codeArtifactPackage := CodeArtifactPackage(
-      organization = projectID.value.organization,
-      name = projectID.value.name,
-      version = projectID.value.revision,
+      organization = organization.value,
+      name = name.value,
+      version = version.value,
       scalaVersion = scalaVersion.value,
       sbtBinaryVersion = if (sbtPlugin.value) Some(sbtBinaryVersion.value) else None,
       // See: https://www.scala-sbt.org/1.x/docs/Cross-Build.html#Scala-version+specific+source+directory
