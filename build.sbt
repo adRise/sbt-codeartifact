@@ -19,9 +19,6 @@ ThisBuild / scmInfo := Some(
     "scm:git@github.com:adRise/sbt-codeartifact.git"
   )
 )
-
-githubTokenSource := TokenSource.GitConfig("github.token")
-
 lazy val testSettings: Seq[Setting[_]] = Seq(
   scriptedLaunchOpts := {
     scriptedLaunchOpts.value ++ Seq(
